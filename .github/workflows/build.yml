@@ -1,0 +1,36 @@
+
+name: Build Sony Monitor Pro APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'SonyMonitorPro_Android_Starter.zip'
+      - '.github/workflows/build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract project
+        run: unzip -o SonyMonitorPro_Android_Starter.zip
+
+      - name: Build APK
+        run: gradle -p SonyMonitorPro assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SonyMonitorPro-APK
+          path: SonyMonitorPro/app/build/outputs/apk/debug/*.apk
